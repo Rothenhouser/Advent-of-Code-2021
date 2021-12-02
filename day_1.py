@@ -2,7 +2,7 @@ import collections
 
 increased = 0
 
-with open('day_1.in') as f:
+with open("day_1.in") as f:
     # double-ended queues can be very efficient for moving windows
     # because of fast append/pop
     depths_in_window = collections.deque()
