@@ -13,9 +13,6 @@ inp = [
     "01010",
 ]
 
-zeros = [0, 0, 0, 0, 0]
-ones = [0, 0, 0, 0, 0]
-
 
 def f_iter():
     with open("day_3.in") as f:
@@ -23,18 +20,54 @@ def f_iter():
             yield l
 
 
-inp = f_iter()
-zeros = [0] * 12
-ones = [1] * 12
+inp = list(f_iter())
 
-for l in inp:
-    for i, bit_str in enumerate(l):
-        if bit_str == "0":
-            zeros[i] += 1
-        elif bit_str == "1":
-            ones[i] += 1
 
-gamma = int("".join("0" if z > o else "1" for z, o in zip(zeros, ones)), base=2)
-epsilon = int("".join("0" if z < o else "1" for z, o in zip(zeros, ones)), base=2)
-print(gamma)
-print(gamma * epsilon)
+def count(inp, pos):
+    zeros = 0
+    ones = 0
+    for l in inp:
+        if l[pos] == "0":
+            zeros += 1
+        else:
+            ones += 1
+    return zeros, ones
+
+
+def ogr_filter(zeros, ones, d):
+    if zeros > ones:
+        return d == "0"
+    else:
+        return d == "1"
+    # elif zeros == ones:
+    #     return d == '1'
+
+
+def csr_filter(zeros, ones, d):
+    if zeros > ones:
+        return d == "1"
+    # elif zeros < ones:
+    else:
+        return d == "0"
+    # elif zeros == ones:
+    #     return d == '0'
+
+
+def cut(inp, pos, keep_filter):
+    print(pos)
+    print(inp)
+    if len(inp) < 2:
+        return inp
+
+    zeros, ones = count(inp, pos)
+    print(zeros, ones)
+    keep = [l for l in inp if keep_filter(zeros, ones, l[pos])]
+    return cut(keep, pos + 1, keep_filter)
+
+
+[ogr] = cut(inp, 0, ogr_filter)
+[csr] = cut(inp, 0, csr_filter)
+ogr = int(ogr, base=2)
+csr = int(csr, base=2)
+
+print(csr * ogr)
